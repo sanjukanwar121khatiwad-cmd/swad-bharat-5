@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swad Bharat | Built by Rajat & Praveen</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#FF5200',
+                        secondary: '#002E6E',
+                        paytmCyan: '#00BAF2',
+                        paytmNavy: '#002E6E'
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased min-h-screen flex flex-col">
+
+    <!-- Mandatory First-Launch Login Modal -->
+    <div id="loginModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md">
+        <div class="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-slate-200 relative">
+            <div class="text-center space-y-2 mb-6">
+                <div class="w-14 h-14 bg-gradient-to-tr from-orange-600 to-amber-500 text-white text-3xl font-black rounded-2xl flex items-center justify-center mx-auto shadow-lg shadow-orange-500/30">
+                    S
+                </div>
+                <h3 class="text-2xl font-extrabold text-slate-900 tracking-tight">Welcome to Swad Bharat</h3>
+                <p class="text-xs text-orange-600 font-bold uppercase tracking-wider">Created by Rajat & Praveen</p>
+                <p class="text-xs text-slate-500 pt-1">Please sign in to access 100+ Indian dishes & live order tracking.</p>
+            </div>
+            
+            <form onsubmit="handleUserLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Email Address</label>
+                    <input type="email" id="loginEmail" required placeholder="praveen@example.com" class="w-full px-4 py-2.5 text-xs border border-slate-300 rounded-xl focus:outline-none focus:border-orange-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">Password</label>
+                    <input type="password" id="loginPass" required placeholder="••••••••" class="w-full px-4 py-2.5 text-xs border border-slate-300 rounded-xl focus:outline-none focus:border-orange-500">
+                </div>
+                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-orange-500 to-amber-500 text-white font-extrabold text-sm rounded-xl hover:from-orange-600 hover:to-amber-600 transition shadow-lg">
+                    Sign In to Continue
+                </button>
+            </form>
+
+            <div class="mt-5 pt-4 border-t border-slate-100 text-center">
+                <button onclick="continueAsGuest()" class="text-xs font-bold text-slate-500 hover:text-orange-600 transition flex items-center justify-center mx-auto space-x-1">
+                    <span>Skip for now & Browse as Guest</span>
+                    <i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER / NAVBAR -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('menu')">
+                <div class="w-12 h-12 bg-gradient-to-tr from-orange-600 to-amber-500 rounded-2xl flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-orange-500/30">
+                    S
+                </div>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight leading-none">Swad Bharat</h1>
+                    <p class="text-xs text-orange-600 font-bold mt-1 tracking-wider uppercase">By Rajat & Praveen</p>
+                </div>
+            </div>
+
+            <div class="hidden md:flex flex-1 max-w-md mx-8 relative">
+                <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="searchInput" oninput="handleSearch()" placeholder="Search 100+ Indian & Global dishes..." class="w-full pl-11 pr-4 py-2.5 bg-slate-100 border border-slate-200 rounded-full text-sm focus:outline-none focus:border-orange-500 focus:bg-white transition-all">
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <button onclick="switchTab('menu')" id="nav-menu" class="px-4 py-2 text-sm font-semibold rounded-full bg-orange-50 text-orange-600 transition">
+                    <i class="fa-solid fa-utensils mr-1.5"></i> Menu
+                </button>
+                <button onclick="switchTab('tracker')" id="nav-tracker" class="px-4 py-2 text-sm font-semibold rounded-full text-slate-600 hover:bg-slate-100 transition relative">
+                    <i class="fa-solid fa-location-dot mr-1.5 text-orange-500"></i> Live 3D GPS
+                </button>
+                <button onclick="toggleCartDrawer()" class="relative p-2.5 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition shadow-md shadow-orange-500/20">
+                    <i class="fa-solid fa-basket-shopping text-lg"></i>
+                    <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-slate-900 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </button>
+                <button onclick="openLoginModal()" id="userAuthBtn" class="px-4 py-2 bg-slate-900 text-white text-sm font-medium rounded-full hover:bg-slate-800 transition flex items-center">
+                    <i class="fa-solid fa-user-circle mr-1.5"></i> Login
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO BANNER -->
+    <section class="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-500 text-white py-10 px-4">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+            <div class="space-y-3 text-center md:text-left">
+                <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider">Fastest Delivery Across India</span>
+                <h2 class="text-3xl sm:text-5xl font-extrabold leading-tight">Authentic Indian & Global Delicacies</h2>
+                <p class="text-orange-100 text-sm sm:text-base max-w-xl">Enjoy over 100+ curated dishes crafted by top chefs. Live 3D GPS tracking and instant UPI checkout.</p>
+            </div>
+            <div class="flex gap-4">
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl text-center border border-white/20 min-w-[110px]">
+                    <div class="text-2xl font-black">100+</div>
+                    <div class="text-xs text-orange-100">Dishes</div>
+                </div>
+                <div class="bg-white/10 backdrop-blur-md p-4 rounded-2xl text-center border border-white/20 min-w-[110px]">
+                    <div class="text-2xl font-black">30 Min</div>
+                    <div class="text-xs text-orange-100">Fast Delivery</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- PRICE RANGE & CATEGORY FILTER BAR -->
+        <div id="categoryFilterBar" class="mb-8 space-y-6">
+            
+            <!-- ORDER PRICE RANGE SELECTOR -->
+            <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-xs font-bold uppercase text-slate-500 tracking-wider flex items-center">
+                        <i class="fa-solid fa-tags text-orange-500 mr-2"></i> Filter by Budget / Order Price Range
+                    </h4>
+                    <span id="activePriceLabel" class="text-xs font-extrabold text-orange-600 bg-orange-50 px-3 py-1 rounded-full">Showing All Prices</span>
+                </div>
+                <div class="flex flex-wrap gap-2" id="priceRangeContainer">
+                    <button onclick="setPriceRange('all')" id="pr-all" class="px-4 py-2 text-xs font-bold rounded-xl border bg-orange-500 text-white">All Items</button>
+                    <button onclick="setPriceRange('0-100')" id="pr-0-100" class="px-4 py-2 text-xs font-bold rounded-xl border bg-slate-100 text-slate-700 hover:bg-slate-200">Under ₹100</button>
+                    <button onclick="setPriceRange('100-200')" id="pr-100-200" class="px-4 py-2 text-xs font-bold rounded-xl border bg-slate-100 text-slate-700 hover:bg-slate-200">₹100 - ₹200</button>
+                    <button onclick="setPriceRange('200-300')" id="pr-200-300" class="px-4 py-2 text-xs font-bold rounded-xl border bg-slate-100 text-slate-700 hover:bg-slate-200">₹200 - ₹300</button>
+                    <button onclick="setPriceRange('300-500')" id="pr-300-500" class="px-4 py-2 text-xs font-bold rounded-xl border bg-slate-100 text-slate-700 hover:bg-slate-200">₹300 - ₹500</button>
+                    <button onclick="setPriceRange('500-1000')" id="pr-500-1000" class="px-4 py-2 text-xs font-bold rounded-xl border bg-slate-100 text-slate-700 hover:bg-slate-200">₹500 - ₹1000</button>
+                </div>
+            </div>
+
+            <!-- CATEGORY & DIET TOGGLE -->
+            <div class="flex items-center justify-between gap-4">
+                <h3 class="text-xl font-bold text-slate-900">Explore Cuisine Categories</h3>
+                <div class="flex items-center gap-2 bg-slate-200 p-1 rounded-full">
+                    <button onclick="setDietFilter('all')" id="diet-all" class="px-4 py-1.5 rounded-full text-xs font-bold bg-white text-slate-800 shadow-sm">All</button>
+                    <button onclick="setDietFilter('veg')" id="diet-veg" class="px-4 py-1.5 rounded-full text-xs font-bold text-green-700 hover:bg-white/50">🟢 Veg</button>
+                    <button onclick="setDietFilter('nonveg')" id="diet-nonveg" class="px-4 py-1.5 rounded-full text-xs font-bold text-red-700 hover:bg-white/50">🔴 Non-Veg</button>
+                </div>
+            </div>
+            <div class="flex gap-3 overflow-x-auto pb-2 custom-scrollbar" id="categoriesContainer"></div>
+        </div>
+
+        <!-- MENU GRID -->
+        <div id="view-menu" class="space-y-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="foodGrid"></div>
+        </div>
+
+        <!-- LIVE 3D GPS TRACKER -->
+        <div id="view-tracker" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <span class="px-3 py-1 bg-green-100 text-green-700 font-bold text-xs rounded-full">LIVE GPS ACTIVE</span>
+                        <h3 class="text-2xl font-extrabold text-slate-900 mt-1">3D Delivery Radar Tracking</h3>
+                    </div>
+                </div>
+                <div class="relative w-full h-[360px] bg-slate-900 rounded-2xl overflow-hidden border border-slate-800 shadow-inner">
+                    <canvas id="trackerCanvas" class="w-full h-full block"></canvas>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="bg-slate-900 text-slate-300 py-10 border-t border-slate-800 mt-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div>
+                <h4 class="text-white text-xl font-extrabold mb-2">Swad Bharat</h4>
+                <p class="text-xs text-slate-400">Authentic Taste Delivered Fast.</p>
+                <p class="text-xs text-orange-400 font-semibold mt-4">Created by Rajat & Praveen</p>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-3 text-sm">Merchant Details</h5>
+                <ul class="space-y-2 text-xs text-slate-400">
+                    <li>Owner: Sanju</li>
+                    <li>Phone: +91 9257813359</li>
+                    <li>Email: praveen121khatiward@gmail.com</li>
+                    <li>UPI: 9257813359@ptyes</li>
+                </ul>
+            </div>
+            <div>
+                <h5 class="text-white font-bold mb-3 text-sm">Terminal Log</h5>
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 font-mono text-[11px] text-green-400 h-28 overflow-y-auto custom-scrollbar" id="terminalLogs">
+                    [00:00:01] System Ready.
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- CART SLIDE-OVER -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 invisible transition-all duration-300">
+        <div class="absolute inset-0 bg-slate-950/60 backdrop-blur-sm" onclick="toggleCartDrawer()"></div>
+        <div class="absolute right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl flex flex-col transform translate-x-full transition-transform duration-300" id="cartDrawerPanel">
+            <div class="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
+                <h3 class="text-lg font-bold text-slate-900">Your Basket</h3>
+                <button onclick="toggleCartDrawer()" class="p-2 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-5 space-y-4 custom-scrollbar" id="cartItemsList"></div>
+            <div class="p-5 border-t border-slate-200 bg-slate-50 space-y-4">
+                <input type="text" id="custName" placeholder="Full Name" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
+                <input type="tel" id="custMobile" placeholder="10-digit Mobile Number" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg">
+                <textarea id="custAddress" rows="2" placeholder="Complete Street Address" class="w-full px-3 py-2 text-xs border border-slate-300 rounded-lg"></textarea>
+                <div class="flex justify-between font-extrabold text-sm text-slate-900 pt-1 border-t border-slate-200">
+                    <span>Grand Total:</span><span id="cartTotal" class="text-orange-600">₹0</span>
+                </div>
+                <button onclick="proceedToPaytmCheckout()" class="w-full py-3.5 bg-orange-500 text-white font-extrabold rounded-xl shadow-lg">Proceed to Paytm Payment</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAYTM PAYMENT MODAL -->
+    <div id="paymentModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md hidden">
+        <div class="bg-slate-100 rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl relative p-6 text-center space-y-4">
+            <button onclick="closePaymentModal()" class="absolute top-3 right-3 text-slate-700"><i class="fa-solid fa-xmark"></i></button>
+            <div class="w-16 h-16 bg-amber-200 text-amber-800 text-2xl font-black rounded-full flex items-center justify-center mx-auto">S</div>
+            <h3 class="text-xl font-extrabold text-slate-900">Sanju <i class="fa-solid fa-circle-check text-blue-600"></i></h3>
+            <div class="bg-gradient-to-b from-[#00BAF2] to-[#002E6E] p-4 rounded-3xl shadow-lg text-white">
+                <div class="bg-white p-4 rounded-2xl flex flex-col items-center space-y-3 text-slate-900">
+                    <div class="w-48 h-48 bg-white border-2 border-slate-100 p-2 rounded-xl flex items-center justify-center">
+                        <img id="qrImage" src="" alt="UPI QR" class="w-full h-full object-contain">
+                    </div>
+                    <span class="text-xs font-bold text-orange-500">9257813359@ptyes</span>
+                </div>
+            </div>
+            <button onclick="confirmOrderAndNotifyAdmin()" class="w-full py-3 bg-green-600 text-white font-bold text-xs rounded-xl flex items-center justify-center space-x-2">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+                <span>Confirm & Dispatch to WhatsApp (+91 9257813359)</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- External JavaScript File -->
+    <script src="script.js"></script>
+</body>
+</html>
